@@ -43,7 +43,7 @@ export const Form = function () {
             <Box maw={350} mx="auto" className="shadow-md my-5 bg-white rounded">
                 <form onSubmit={form.onSubmit((values) => {
                     if (values.name === 'error') {
-                        Error("Cette adresse n'est pas disponible");
+                        Error("Cette adresse n'est pas disponible.");
                     } else {
                         Success("Votre inscription a bien été prise en compte. Validez votre adresse mail pour vous connecter");
                     }
