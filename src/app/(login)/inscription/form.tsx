@@ -7,6 +7,8 @@ import {NoticeMessage, SectionContainer} from "tp-kit/components";
 import Link from "next/link";
 import {useZodI18n, ZodI18nProvider} from "tp-kit/components/providers";
 import {useState} from "react";
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { useRouter } from 'next/navigation'
 
 const schema = z.object({
     name: z.string().min(2),
@@ -17,6 +19,43 @@ const schema = z.object({
 type FormValues = z.infer<typeof schema>;
 
 export const Form = function () {
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
+    const router = useRouter()
+    const supabase = createClientComponentClient()
+
+
+    const [notices, setNotices] = useState([]);
+
+    function error(message) {
+        setNotices([...notices, {type: "error", message}]);
+    }
+
+    function success(message) {
+        setNotices([...notices, {type: "success", message}]);
+    }
+
+    const handleSignUp = async (values) => {
+
+        const result = await supabase.auth.signUp({
+            email: values.email,
+            password: values.password,
+            options: {
+                emailRedirectTo: `${location.origin}/auth/callback`,
+                data: {
+                    name: values.name,
+                }
+            },
+        })
+
+        if (result.error != null) {
+            error("Cette adresse n'est pas disponible.");
+        } else {
+            success("Votre inscription a bien été prise en compte. Validez votre adresse mail pour vous connecter");
+        }
+
+        console.log(result);
+    }
     // Applique les traductions à zod
     useZodI18n(z);
 
@@ -29,27 +68,10 @@ export const Form = function () {
         },
     });
 
-    const [notices, setNotices] = useState([]);
-
-    function Error(message) {
-        setNotices([...notices, {type: "error", message}]);
-    }
-
-    function Success(message) {
-        setNotices([...notices, {type: "success", message}]);
-    }
-
-
     return (
         <SectionContainer wrapperClassName="max-w-5xl">
             <Box maw={350} mx="auto" className="shadow-md my-5 bg-white rounded">
-                <form onSubmit={form.onSubmit((values) => {
-                    if (values.name === 'error') {
-                        Error("Cette adresse n'est pas disponible");
-                    } else {
-                        Success("Votre inscription a bien été prise en compte. Validez votre adresse mail pour vous connecter");
-                    }
-                })} className="p-5">
+                <form onSubmit={form.onSubmit((handleSignUp))} className="p-5">
                         <h1 className="mb-3">INSCRIPTION</h1>
 
                         {notices.map((notice, i) => (
