@@ -7,7 +7,7 @@ import Link from "next/link";
 import {NoticeMessage, SectionContainer} from "tp-kit/components";
 import {useZodI18n} from "tp-kit/components/providers";
 import {useState} from "react";
-import {useRouter} from "next/navigation";
+import {redirect, useRouter} from "next/navigation";
 import {createSupabaseClient} from "@supabase/auth-helpers-shared";
 import {createClientComponentClient} from "@supabase/auth-helpers-nextjs";
 
@@ -57,6 +57,7 @@ export const Form = function () {
         if (signin.error) {
             console.log(signin.error);
         } else{
+            router.push('/mon-compte')
             router.refresh()
         }
     }
