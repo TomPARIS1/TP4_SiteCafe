@@ -7,6 +7,9 @@ import Link from "next/link";
 import {NoticeMessage, SectionContainer} from "tp-kit/components";
 import {useZodI18n} from "tp-kit/components/providers";
 import {useState} from "react";
+import {useRouter} from "next/navigation";
+import {createSupabaseClient} from "@supabase/auth-helpers-shared";
+import {createClientComponentClient} from "@supabase/auth-helpers-nextjs";
 
 const schema = z.object({
     email: z.string().email().nonempty(),
@@ -18,6 +21,10 @@ type FormValues = z.infer<typeof schema>;
 export const Form = function () {
     // Applique les traductions à zod
     useZodI18n(z);
+
+    const router = useRouter();
+
+    const supabase = createClientComponentClient();
 
     const form = useForm<FormValues>({
         validate: zodResolver(schema),
@@ -37,21 +44,28 @@ export const Form = function () {
         setNotices([...notices, {type: "success", message}]);
     }
 
+    const handleSignIn = async (values) => {
+        console.log(1)
+
+        const signin = await supabase.auth.signInWithPassword({
+            email: values.email,
+            password: values.password,
+        });
+
+        console.log(2)
+
+        if (signin.error) {
+            console.log(signin.error);
+        } else{
+            router.refresh()
+        }
+    }
 
     return (
         <SectionContainer wrapperClassName="max-w-5xl">
             <Box maw={350} mx="auto" className="shadow-md my-5 bg-white rounded">
-                <form onSubmit={form.onSubmit((values) => {
-                    if (values.name === 'error') {
-                        Error("Cette adresse n'est pas disponible.");
-                    } else {
-                        Success("Votre inscription a bien été prise en compte. Validez votre adresse mail pour vous connecter");
-                    }
-                })} className="p-5">
+                <form className="p-5" onSubmit={form.onSubmit(values => handleSignIn(values))}>
                     <h1 className="mb-3">CONNEXION</h1>
-                    {notices.map((notice, i) => (
-                        <NoticeMessage key={i}{...notice}/>
-                    ))}
                     <TextInput
                         withAsterisk
                         label="Adresse email"
