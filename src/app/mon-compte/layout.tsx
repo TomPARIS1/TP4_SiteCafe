@@ -10,9 +10,13 @@ import {redirect, useRouter} from "next/navigation";
 import {Profil} from "../../components/profil";
 
 export default async function Layout({children}: { children: ReactNode }) {
-    const orders = await prisma.order.findMany();
     const supabase = createServerComponentClient({cookies})
     const userData = await getUser(supabase);
+    const orders = await prisma.order.findMany({
+        where: {
+            userId: userData.session.user.id
+        }
+    });
 
     if (!userData.session) {
         redirect('/connexion')
