@@ -34,17 +34,7 @@ export const Form = function () {
         },
     });
 
-    const [notices, setNotices] = useState([]);
-
-    function Error(message) {
-        setNotices([...notices, {type: "error", message}]);
-    }
-
-    function Success(message) {
-        setNotices([...notices, {type: "success", message}]);
-    }
-
-    const handleSignIn = async (values) => {
+    const handleSignIn = async (values: {email:string, password:string}) => {
         console.log(1)
 
         const signin = await supabase.auth.signInWithPassword({
@@ -81,7 +71,7 @@ export const Form = function () {
                     />
 
                     <Button type="submit" className="bg-green-600 my-5 h-75 items-center hover:bg-green-600 h-12"
-                            fullWidth="true">
+                            fullWidth>
                         Me connecter
                     </Button>
                     <Link href={'../inscription'}><p className="text-sm text-center text-green">Créer un compte</p>

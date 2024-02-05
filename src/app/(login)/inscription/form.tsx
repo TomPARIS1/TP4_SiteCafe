@@ -24,18 +24,7 @@ export const Form = function () {
     const router = useRouter()
     const supabase = createClientComponentClient()
 
-
-    const [notices, setNotices] = useState([]);
-
-    function error(message) {
-        setNotices([...notices, {type: "error", message}]);
-    }
-
-    function success(message) {
-        setNotices([...notices, {type: "success", message}]);
-    }
-
-    const handleSignUp = async (values) => {
+    const handleSignUp = async (values: {email:string, password:string, name:string}) => {
 
         const result = await supabase.auth.signUp({
             email: values.email,
@@ -47,12 +36,6 @@ export const Form = function () {
                 }
             },
         })
-
-        if (result.error != null) {
-            error("Cette adresse n'est pas disponible.");
-        } else {
-            success("Votre inscription a bien été prise en compte. Validez votre adresse mail pour vous connecter");
-        }
 
         console.log(result);
     }
@@ -73,10 +56,6 @@ export const Form = function () {
             <Box maw={350} mx="auto" className="shadow-md my-5 bg-white rounded">
                 <form onSubmit={form.onSubmit((handleSignUp))} className="p-5">
                         <h1 className="mb-3">INSCRIPTION</h1>
-
-                        {notices.map((notice, i) => (
-                            <NoticeMessage key={i}{...notice}/>
-                        ))}
 
                         <TextInput
                             withAsterisk
@@ -100,7 +79,7 @@ export const Form = function () {
                         />
 
                         <Button type="submit" className="bg-green-600 my-5 items-center hover:bg-green-600 h-12"
-                                fullWidth="true">
+                                fullWidth>
                             Créer un compte
                         </Button>
                         <Link href={'../connexion'}><p className="text-sm text-center text-green">Déjà un compte ? Se

@@ -18,7 +18,7 @@ export async function createOrder(cart: CartData) {
     console.log(
         await prisma.order.create({
             data: {
-                userId: userId,
+                userId: userId!,
                 total: computeCartTotal(cart.lines),
                 lines: {
                     create: cart.lines.map((line) => ({
