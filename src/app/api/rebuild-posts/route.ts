@@ -14,5 +14,9 @@ export async function POST(req : Request) {
         })
     }
     console.log("test")
-    
+    revalidatePath('/[categorySlug]/[productSlug]')
+    return NextResponse.json({
+        "revalidated":true,
+        "date":new Date().toISOString()
+    })
 }
