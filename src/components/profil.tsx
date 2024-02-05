@@ -20,7 +20,7 @@ export const Profil = function ({userData} : props) {
     }
 
     console.log(userData);
-
+    
     return (
         <div className="flex">
             <div className="bg-white rounded-lg p-6 flex-auto w-4 mr-7">

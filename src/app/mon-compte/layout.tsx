@@ -12,11 +12,14 @@ import {Profil} from "../../components/profil";
 export default async function Layout({children}: { children: ReactNode }) {
     const supabase = createServerComponentClient({cookies})
     const userData = await getUser(supabase);
-    const orders = await prisma.order.findMany();
 
     if (!userData.session) {
         redirect('/connexion')
     }
+
+    const orders = await prisma.order.findMany({
+        where: {userId: userData.session.user.id}
+    });
 
     return (
         <>
